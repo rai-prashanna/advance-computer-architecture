@@ -1,0 +1,4 @@
+*.o
+test_atomic_counter
+test_user_lock
+obj/*
