@@ -1,0 +1,6 @@
+sudo lshw -C memory
+lscpu
+lstopo
+#cache size
+getconf -a | grep CACHE
+x86info -c   
