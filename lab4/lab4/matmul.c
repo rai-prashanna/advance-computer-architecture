@@ -82,54 +82,6 @@ matmul_sse_block(int i, int j, int k)
          * parameter can be used to restrict to which elements the
          * result is stored, all other elements are set to zero.
          */
-
-        __m128 a_1, a_2, a_3, a_4;
-        a_1 = _mm_load_ps(&mat_a[i][k]);
-        a_2 = _mm_load_ps(&mat_a[i+1][k]);
-        a_3 = _mm_load_ps(&mat_a[i+2][k]);
-        a_4 = _mm_load_ps(&mat_a[i+3][k]);
-
-        __m128 b_1, b_2, b_3, b_4;
-        b_1 = _mm_load_ps(&mat_b[k][j]);
-        b_2 = _mm_load_ps(&mat_b[k+1][j]);
-        b_3 = _mm_load_ps(&mat_b[k+2][j]);
-        b_4 = _mm_load_ps(&mat_b[k+3][j]);
-        _MM_TRANSPOSE4_PS(b_1, b_2, b_3, b_4);
-
-        __m128 c_1, c_2, c_3, c_4;
-        c_1 = _mm_load_ps(&mat_c[i][j]);
-        c_2 = _mm_load_ps(&mat_c[i+1][j]);
-        c_3 = _mm_load_ps(&mat_c[i+2][j]);
-        c_4 = _mm_load_ps(&mat_c[i+3][j]);
-
-        __m128 mult_1, mult_2, mult_3, mult_4;
-        mult_1 = _mm_dp_ps(a_1, b_1, 0xF1);
-        mult_2 = _mm_dp_ps(a_1, b_2, 0xF2);
-        mult_3 = _mm_dp_ps(a_1, b_3, 0xF4);
-        mult_4 = _mm_dp_ps(a_1, b_4, 0xF8);
-        c_1 = _mm_add_ps(c_1, _mm_add_ps(_mm_add_ps(mult_1, mult_2), _mm_add_ps(mult_3, mult_4)));
-        _mm_store_ps(&mat_c[i][j], c_1);
-
-        mult_1 = _mm_dp_ps(a_2, b_1, 0xF1);
-        mult_2 = _mm_dp_ps(a_2, b_2, 0xF2);
-        mult_3 = _mm_dp_ps(a_2, b_3, 0xF4);
-        mult_4 = _mm_dp_ps(a_2, b_4, 0xF8);
-        c_2 = _mm_add_ps(c_2, _mm_add_ps(_mm_add_ps(mult_1, mult_2), _mm_add_ps(mult_3, mult_4)));
-        _mm_store_ps(&mat_c[i+1][j], c_2);
-
-        mult_1 = _mm_dp_ps(a_3, b_1, 0xF1);
-        mult_2 = _mm_dp_ps(a_3, b_2, 0xF2);
-        mult_3 = _mm_dp_ps(a_3, b_3, 0xF4);
-        mult_4 = _mm_dp_ps(a_3, b_4, 0xF8);
-        c_3 = _mm_add_ps(c_3, _mm_add_ps(_mm_add_ps(mult_1, mult_2), _mm_add_ps(mult_3, mult_4)));
-        _mm_store_ps(&mat_c[i+2][j], c_3);
-
-        mult_1 = _mm_dp_ps(a_4, b_1, 0xF1);
-        mult_2 = _mm_dp_ps(a_4, b_2, 0xF2);
-        mult_3 = _mm_dp_ps(a_4, b_3, 0xF4);
-        mult_4 = _mm_dp_ps(a_4, b_4, 0xF8);
-        c_4 = _mm_add_ps(c_4, _mm_add_ps(_mm_add_ps(mult_1, mult_2), _mm_add_ps(mult_3, mult_4)));
-        _mm_store_ps(&mat_c[i+3][j], c_4);
 }
 
 /**
@@ -337,22 +289,6 @@ matmul_sse()
         /* TASK: Implement your simple matrix multiplication using SSE
          * here. (Multiply mat_a and mat_b into mat_c.)
          */
-        __m128 a_vec, b_vec, mult;
-        for (i = 0; i < SIZE; i++)
-                for (k = 0; k < SIZE; k+=4)
-                        for (j = 0; j < SIZE; j++)
-                        {
-                                
-                                a_vec = _mm_load_ps(&mat_a[i][k]);
-                                b_vec = _mm_set_ps(mat_b[k+3][j], mat_b[k+2][j], mat_b[k+1][j], mat_b[k][j]);
-
-                                
-                                mult = _mm_mul_ps(a_vec,b_vec);;
-                                mult = _mm_hadd_ps(mult, mult);
-                                mult = _mm_hadd_ps(mult, mult);
-
-                                mat_c[i][j] += _mm_cvtss_f32(mult);
-                        }
 }
 
 #else

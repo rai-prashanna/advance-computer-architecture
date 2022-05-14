@@ -159,14 +159,6 @@ lcase_sse_simple(char *restrict dst, const char *restrict src, size_t len)
          *  - _mm_set1_epi8
          *  - _mm_or_si128 (the por instruction)
          */
-
-        const __m128i case_array = _mm_set1_epi8(0x20);
-
-        for (int i=0 ; i<=len ; i+=16)
-        {
-                __m128i value = _mm_loadu_si128((__m128i *)(src+i));
-                _mm_storeu_si128((__m128i *)(dst+i),_mm_or_si128(value,case_array)); 
-        }
 }
 
 static void
@@ -184,17 +176,6 @@ lcase_sse_cond(char *restrict dst, const char *restrict src, size_t len)
          *  - _mm_cmpgt_epi8 (the pcmpgtb instruction)
          *  - _mm_and_si128 (the pand instruction)
          */
-
-        const __m128i case_array = _mm_set1_epi8(0x20);
-        const __m128i one_less_A = _mm_set1_epi8(0x40);
-        const __m128i one_greater_Z = _mm_set1_epi8(0x5B);
-
-        for (int i=0 ; i<=len ; i+=16)
-        {
-                __m128i value = _mm_loadu_si128((__m128i *)(src+i));
-                __m128i UpperCase = _mm_and_si128(_mm_cmpgt_epi8(value,one_less_A),_mm_cmpgt_epi8(one_greater_Z,value));
-                _mm_storeu_si128((__m128i *)(dst+i),_mm_or_si128(value,_mm_and_si128(UpperCase,case_array))); 
-        }
 }
 
 static char *
